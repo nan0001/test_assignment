@@ -1,0 +1,74 @@
+@let bookList = bookList$ | async;
+
+<div class="book-search">
+  <img ngSrc="assets/beautiful-milky-way-night-sky.jpg" fill>
+
+  <form class="book-search__form" (ngSubmit)="search()">
+    <mat-form-field class="book-search__field">
+      <mat-label>Book name</mat-label>
+      <input
+      matInput
+      type="text"
+      name="bookName"
+      [ngModel]="query"
+      (ngModelChange)="updateQuery($event)">
+    </mat-form-field>
+
+    <button mat-flat-button type="submit">Search</button>
+  </form>
+
+  <div class="book-search__result">
+    @if (emptyQuery) {
+      <p class="book-search__error">Please enter a book name</p>
+    }
+
+    @if (isLoadingResults) {
+      <mat-spinner></mat-spinner>
+    }
+    @else {
+      @if (!!bookList && !emptyQuery) {
+        @if (!bookList?.length) {
+          <p class="book-search__error">Books not found</p>
+        }
+        @else {
+          <div class="book-search__list">
+            <table mat-table [dataSource]="bookList">
+
+              <ng-container matColumnDef="number">
+                <th mat-header-cell *matHeaderCellDef>#</th>
+                <td mat-cell *matCellDef="let book">{{book.number}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Title</th>
+                <td mat-cell *matCellDef="let book" [appHighlightWords]="query" [text]="book.title"></td>
+              </ng-container>
+
+              <ng-container matColumnDef="author">
+                <th mat-header-cell *matHeaderCellDef>Author</th>
+                <td mat-cell *matCellDef="let book">
+                  @for (author of book.author; track $index) {
+                    <p>{{author}}</p>
+                  }
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openDetails(row)" class="book-search__row"></tr>
+            </table>
+          </div>
+
+          <mat-paginator
+          class="book-search__paginator"
+          [length]="totalResults"
+          [pageSize]="100"
+          aria-label="Select page of book search results"
+          [pageIndex]="currentPageIndex"
+          (page)="handlePageEvent($event)"
+          ></mat-paginator>
+        }
+      }
+    }
+  </div>
+</div>
+

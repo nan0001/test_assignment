@@ -1,0 +1,38 @@
+@let details = details$ | async;
+
+<a routerLink="/">Back to list</a>
+
+<div class="book-details">
+  @if (isLoading) {
+    <mat-spinner class="book-details__spinner"></mat-spinner>
+  }
+
+  @if (details) {
+    <div class="book-details__cover" >
+      <img [ngSrc]="coverLink" fill>
+    </div>
+
+    <ul class="book-details__list">
+      @for (field of details; track $index) {
+        @if (!!field.value.length) {
+          <li class="book-details__item">
+            <p class="book-details__label">{{field.label}}</p>
+
+            @if (field.type === 'array') {
+              <div class="book-details__value book-details__value_multiple">
+                @for (item of field.value; track $index) {
+                  <p>{{item}}</p>
+                }
+              </div>
+            }
+            @else {
+              <p class="book-details__value book-details__value_single">{{field.value}}</p>
+            }
+          </li>
+        }
+      }
+    </ul>
+  }
+</div>
+
+
