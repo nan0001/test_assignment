@@ -11,4 +11,5 @@ export const routes: Routes = [
     component: BookDetailsComponent,
     canActivate: [bookSelectedByUserGuard],
   },
+  { path: '**', redirectTo: '' },
 ];
